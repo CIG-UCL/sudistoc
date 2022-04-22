@@ -36,7 +36,6 @@ def sudistoc_gen(image1_files,
             weightGT = [nib.load(weightGT_files[i]).get_fdata().squeeze()[np.newaxis,..., np.newaxis] for i in ind_batch]
             weightGT = np.concatenate(weightGT, axis=0)
             weightGT = weightGT.astype(np.float32)
-            weights = ()
                     
         if imageGT_files is not None:
             imageGT = [nib.load(imageGT_files[i]).get_fdata().squeeze()[np.newaxis,..., np.newaxis] for i in ind_batch]
@@ -53,38 +52,37 @@ def sudistoc_gen(image1_files,
             image0 = np.zeros_like(image1)
         field0 = np.zeros((batch_size, *inshape, ndims))
         
-        inputs = [image1, image2]
-        
+        inputs = [image1]
+        if image2_files is not None:
+            inputs += [image2]
+            
         groundTruths = []
         
         if unsup:         
             groundTruths += [image0]
-            if is_weight:
-                weights += (np.ones_like(weightGT),)#  (None,)
        
         if imageGT_files is not None:
-            groundTruths += [imageGT]
             if is_weight:
-                weights += (weightGT,)
-            if image2_files is not None:
+                groundTruths += [np.concatenate([imageGT, weightGT], axis=-1)]
+            else:
                 groundTruths += [imageGT]
+            if image2_files is not None:
                 if is_weight:
-                    weights += (weightGT,)
+                    groundTruths += [np.concatenate([imageGT, weightGT], axis=-1)]
+                else:
+                    groundTruths += [imageGT]
         
         if fieldGT_files is not None:
-            groundTruths +=  [fieldGT]    
             if is_weight:
-                weights += (weightGT,)
+                groundTruths += [np.concatenate([fieldGT, weightGT], axis=-1)]
+            else:
+                groundTruths += [fieldGT] 
             if image2_files is not None:
-                groundTruths += [-fieldGT]
                 if is_weight:
-                    weights += (weightGT,)
+                    groundTruths += [np.concatenate([-fieldGT, weightGT], axis=-1)]
+                else:
+                    groundTruths += [-fieldGT] 
                 
         groundTruths += [field0]   
-        if is_weight:
-            weights += (np.ones_like(weightGT),)#  (None,)
-        
-        if is_weight:
-            yield (inputs, groundTruths, weights)  
-        else:
-            yield (inputs, groundTruths) 
+
+        yield (inputs, groundTruths) 

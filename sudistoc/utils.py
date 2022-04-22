@@ -70,7 +70,7 @@ def plot_img(sample, slicepos=0.47, colnames=None, cmin=[None], cmax=[None]):
     dims=len(sample[0].shape[1:-1])
 
     for i in range(len(sample)):
-        if sample[i].shape[0] == 1: sample[i] = sample[0, ...]
+        if sample[i].shape[0] == 1: sample[i] = sample[i][0, ...]
         plt.subplot(1,pltcol,i+1);
         if dims == 2:
             slicey = np.squeeze(sample[i][:,:,0])

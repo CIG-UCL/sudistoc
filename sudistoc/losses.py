@@ -19,6 +19,17 @@ class MSE:
         
         return loss
   
+class wMSE:
+    """
+    Weighted mean squared error.
+    """
+    def loss(self, y_true, y_pred, sample_weight=None): 
+        
+        y_true, weight = tf.split(y_true, num_or_size_splits=2, axis=-1)
+        
+        loss = K.sum(weight * K.square(y_true - y_pred)) / K.sum(weight)
+        
+        return loss
     
 class Jacob:
     """
