@@ -5,23 +5,11 @@ import tensorflow.keras.layers as KL
 import tensorflow.keras.backend as K
 from . import utils
 
-
-class MSE:
-    """
-    Weighted mean squared error.
-    """
-    def loss(self, y_true, y_pred, sample_weight=None): 
-        
-        if sample_weight is None:
-            sample_weight = K.ones_like(y_true)
-        
-        loss = K.sum(sample_weight * K.square(y_true - y_pred)) / K.sum(sample_weight)
-        
-        return loss
-  
+ 
 class wMSE:
     """
     Weighted mean squared error.
+    Weight map is assumed to be concatenated to y_true on last axis.
     """
     def loss(self, y_true, y_pred, sample_weight=None): 
         
@@ -48,9 +36,9 @@ class Jacob:
     def _jac(self, f):
         
         if self.isshift:
-            _, jacf = jacobian(shift_to_transfo(f), outDet=True) 
+            _, jacf = utils.jacobian(utils.shift_to_transfo(f), outDet=True) 
         else:
-            _, jacf = jacobian(f, outDet=True)
+            _, jacf = utils.jacobian(f, outDet=True)
     
         return jacf
 

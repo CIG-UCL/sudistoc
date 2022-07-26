@@ -244,8 +244,6 @@ class sudistoc_net(modelio.LoadableModel):
         """
         return self.register().predict([src, trg])
 
-
-
     def apply_transform(self, src, trg, img, interp_method='linear'):
         """
         Predicts the transform from src to trg and applies it to the img tensor.

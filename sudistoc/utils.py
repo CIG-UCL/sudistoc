@@ -21,13 +21,13 @@ def develop(x, dec='|_'):
 
 def plot_input_GT(sample, slicepos=0.47, rowtype=['Input', 'Ground truth', 'Weight']):
     
-    slicey=0
+    slicey = 0
     pltcol = np.max((len(sample[0]),len(sample[1])))
     pltrow = len(sample)
     
     inshape = sample[0][0].shape[1:-1]
     dims = len(inshape)
-    numslice = int(slicepos*inshape[0])
+    numslice = int(slicepos*inshape[2])
     
     dims=len(sample[0][0].shape[1:-1])
     
@@ -43,17 +43,19 @@ def plot_input_GT(sample, slicepos=0.47, rowtype=['Input', 'Ground truth', 'Weig
                 if dims == 2:
                     slicey = np.squeeze(sample[j][i][0,:,:,0])
                 elif dims == 3:
-                    slicey = np.squeeze(sample[j][i][0,numslice,:,:,0])
-            plt.imshow(np.fliplr(np.rot90(slicey)))   
+                    slicey = np.squeeze(sample[j][i][0,:,:,numslice,0])
+            plt.imshow(slicey) 
             ax = plt.gca();
             ax.grid(linestyle='-', linewidth=0.5)
             ax.set_xticklabels([])
-            ax.set_xticks(range(0,slicey.shape[0],10))
+            ax.set_xticks(range(0, slicey.shape[1],10))
             ax.set_yticklabels([])
-            ax.set_yticks(range(0,slicey.shape[1],10))
+            ax.set_yticks(range(0, slicey.shape[0],10))
             ax.tick_params(direction='out', length=0, width=0, grid_color='grey', grid_alpha=0.75)
+            ax.invert_xaxis()
+            ax.invert_yaxis()
             plt.title(rowtype[j] + ' ' + str(i), fontsize=10)
-
+            
 
 def plot_img(sample, slicepos=0.47, colnames=None, cmin=[None], cmax=[None]):
 
@@ -65,7 +67,7 @@ def plot_img(sample, slicepos=0.47, colnames=None, cmin=[None], cmax=[None]):
     
     inshape = sample[0].shape[1:-1]
     dims = len(inshape)
-    numslice = int(slicepos*inshape[0])
+    numslice = int(slicepos*inshape[2])
     
     dims=len(sample[0].shape[1:-1])
 
@@ -75,16 +77,18 @@ def plot_img(sample, slicepos=0.47, colnames=None, cmin=[None], cmax=[None]):
         if dims == 2:
             slicey = np.squeeze(sample[i][:,:,0])
         elif dims == 3:
-            slicey = np.squeeze(sample[i][numslice,:,:,0])
+            slicey = np.squeeze(sample[i][:,:,numslice,0])
             
-        plt.imshow(np.fliplr(np.rot90(slicey)), vmin=cmin[i], vmax=cmax[i])   
+        plt.imshow(slicey, vmin=cmin[i], vmax=cmax[i])   
         ax = plt.gca();
         ax.grid(linestyle='-', linewidth=0.5)
         ax.set_xticklabels([])
-        ax.set_xticks(range(0,slicey.shape[0],10))
+        ax.set_xticks(range(0,slicey.shape[1],10))
         ax.set_yticklabels([])
-        ax.set_yticks(range(0,slicey.shape[1],10))
+        ax.set_yticks(range(0,slicey.shape[0],10))
         ax.tick_params(direction='out', length=0, width=0, grid_color='grey', grid_alpha=0.75)
+        ax.invert_xaxis()
+        ax.invert_yaxis()
         plt.title(colnames[i], fontsize=10)
             
             
